@@ -26,7 +26,7 @@ var EXCEPT_INT = 0x800; // interrupt of external devices
 var EXCEPT_SYSCALL = 0xc00; // syscall, jump into supervisor mode
 
 // constructor
-function CPU(ram) {
+CPU = function(ram) {
     this.ram = ram;
 
     // registers
@@ -94,7 +94,7 @@ function CPU(ram) {
     this.SR_CID = 0x0; //Context ID
 
     this.Reset();
-}
+};
 
 CPU.prototype.Reset = function() {
     this.TTMR = 0x0;
@@ -107,7 +107,7 @@ CPU.prototype.Reset = function() {
     this.Exception(EXCEPT_RESET, 0x0); // set pc values
     this.pc = this.nextpc;
     this.nextpc++;
-}
+};
 
 CPU.prototype.InvalidateTLB = function() {
     this.fasttlblookup[0] = -1;
@@ -116,7 +116,7 @@ CPU.prototype.InvalidateTLB = function() {
     this.fasttlbcheck[0] = -1;
     this.fasttlbcheck[1] = -1;
     this.fasttlbcheck[2] = -1;
-}
+};
 
 
 CPU.prototype.AnalyzeImage = function() // get addresses for fast refill
@@ -124,7 +124,7 @@ CPU.prototype.AnalyzeImage = function() // get addresses for fast refill
     this.boot_dtlb_misshandler_address = this.ram.int32mem[0x900 >> 2];
     this.boot_itlb_misshandler_address = this.ram.int32mem[0xA00 >> 2];
     this.current_pgd = ((this.ram.int32mem[0x2018>>2]&0xFFF)<<16) | (this.ram.int32mem[0x201C>>2] & 0xFFFF);
-}
+};
 
 CPU.prototype.SetFlags = function (x) {
     this.SR_SM = (x & (1 << 0)) ? true : false;
@@ -217,12 +217,6 @@ CPU.prototype.CheckForInterrupt = function () {
 
 CPU.prototype.RaiseInterrupt = function (line) {
     var lmask = 1 << line;
-/*
-    if (this.PICSR & lmask) {
-        // Interrupt already signaled and pending
-        // DebugMessage("Warning: Int pending, ignored");
-    }
-*/
     this.PICSR |= lmask;
     this.CheckForInterrupt();
 };
@@ -678,14 +672,6 @@ CPU.prototype.Step = function (steps) {
             }
         }
         ins = int32mem[(ftlb[0] ^ this.pc)];
-        /*
-        // for the slow variant
-        ins = this.GetInstruction(this.pc<<2)
-        if (ins == -1) {
-            this.pc = this.nextpc++;
-            continue;
-        }
-        */
 
         switch ((ins >> 26)&0x3F) {
         case 0x0:

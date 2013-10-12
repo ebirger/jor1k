@@ -3,20 +3,20 @@
 // -------------------------------------------------
 
 // constructor
-function RAM(heap, ramoffset) {
+RAM = function(heap, ramoffset) {
     //use typed arrays
     this.mem = heap;
     this.int32mem = new Int32Array(this.mem, ramoffset);
     this.uint8mem = new Uint8Array(this.mem, ramoffset);
     this.devices = [];
-}
+};
 
 RAM.prototype.AddDevice = function(device, devaddr, devsize)
 {
     device.deviceaddr = devaddr;
     device.devicesize = devsize;
     this.devices.push(device);
-}
+};
 
 RAM.prototype.ReadMemory32 = function(addr) {
     if (addr >= 0) {

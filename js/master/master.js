@@ -2,20 +2,20 @@
 // -------------------- Master ---------------------
 // -------------------------------------------------
 
-function DebugMessage(message) {
-    console.log(message);
-}
+DebugMessage = function(message) {
+    debug.dump(message);
+};
 
 // small uart device
-function UARTDev(worker) {
+UARTDev = function(worker) {
     this.ReceiveChar = function(c) {
         if (!worker.fbfocus) { // check if framebuffer has focus
             worker.SendToWorker("tty", c);
         }
     };
-}
+};
 
-function jor1kGUI(termid, fbid, statsid, imageurls)
+jor1kGUI = function(termid, fbid, statsid, imageurls)
 {
     this.urls = imageurls;
     this.worker = new Worker('js/worker/worker.js');
@@ -98,10 +98,10 @@ function jor1kGUI(termid, fbid, statsid, imageurls)
     this.SendToWorker("LoadAndStart", this.urls);
     window.setInterval(function(){this.SendToWorker("GetIPS", 0)}.bind(this), 1000);
     window.setInterval(function(){this.SendToWorker("GetFB", 0)}.bind(this), 100);
-}
+};
 
 
-jor1kGUI.prototype.OnMessage = function(e) {    
+jor1kGUI.prototype.OnMessage = function(e) {
     if (this.stop) return;
     if (e.data.command == "execute") this.SendToWorker("execute", 0); else
     if (e.data.command == "tty") this.term.PutChar(e.data.data); else
@@ -111,7 +111,7 @@ jor1kGUI.prototype.OnMessage = function(e) {
         this.stats.innerHTML = (Math.floor(e.data.data/100000)/10.) + " MIPS";
     } else
     if (e.data.command == "Debug") console.log(e.data.data);
-}
+};
 
 jor1kGUI.prototype.UpdateFramebuffer = function(buffer) {
     var i=0, n = buffer.length;
@@ -127,7 +127,7 @@ jor1kGUI.prototype.UpdateFramebuffer = function(buffer) {
 
     //data.set(buffer);
     this.fbctx.putImageData(this.fbimageData, 0, 0); // at coords 0,0
-}
+};
 
 
 

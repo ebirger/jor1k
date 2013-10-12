@@ -2,11 +2,11 @@
 // ------------------- SYSTEM ----------------------
 // -------------------------------------------------
 
-function System() {
+System = function() {
     sys = this; // one global variable used by the abort() function
     this.running = false;
     this.Init();
-}
+};
 
 System.prototype.ChangeCore = function(coretype, change) {
 
@@ -102,7 +102,7 @@ if (change) {
         }
     }
     this.currentcore = coretype;
-}
+};
 
 System.prototype.Reset = function() {
     this.running = false;
@@ -114,7 +114,7 @@ System.prototype.Reset = function() {
     this.kbddev.Reset();
     this.cpu.Reset();
     this.ips = 0;
-}
+};
 
 System.prototype.Init = function() {
     this.running = false;    
@@ -169,14 +169,14 @@ System.prototype.Init = function() {
     this.ram.AddDevice(this.kbddev, 0x94000000, 0x100);
 
     this.ips = 0; // inctruction per second counter
-}
+};
 
 System.prototype.RaiseInterrupt = function(line) {
     this.cpu.RaiseInterrupt(line);
-}
+};
 System.prototype.ClearInterrupt = function (line) {
     this.cpu.ClearInterrupt(line);
-}
+};
 
 
 System.prototype.PrintState = function() {
@@ -233,20 +233,20 @@ System.prototype.PrintState = function() {
     if (this.cpu.SR_OV) {
         DebugMessage("overflow set");
     }
-}
+};
 
 System.prototype.SendStringToTerminal = function(str)
 {
     for (var i = 0; i < str.length; i++) {
         this.term.PutChar(str.charCodeAt(i));
     }
-}
+};
 
 System.prototype.LoadImageAndStart = function(urls) {
     DebugMessage("Loading urls " + urls);
     this.SendStringToTerminal("Loading kernel and hard drive image from web server. Please wait ...\r\n");
     DownloadAllAsync(urls, this.ImageFinished.bind(this), function(error){DebugMessage(error);} );
-}
+};
 
 System.prototype.ImageFinished = function(result) {
     result.forEach(function(buffer, i) {
@@ -273,7 +273,7 @@ System.prototype.ImageFinished = function(result) {
     SendToMaster("execute", 0);
     this.running = true;
     this.MainLoop();
-}
+};
 
 System.prototype.MainLoop = function() {
     if (!this.running) return;
@@ -281,4 +281,4 @@ System.prototype.MainLoop = function() {
     this.cpu.Step(0x20000);
     this.ips += 0x20000;
     // go to idle state that onmessage is executed    
-}
+};
